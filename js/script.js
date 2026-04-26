@@ -1,54 +1,55 @@
 const select = document.getElementById("cryptoSelect");
 const resultado = document.getElementById("resultado");
 
-// 🔹 Cargar lista de criptos
-async function cargarLista() {
-  try {
-    const res = await fetch("https://api.coinpaprika.com/v1/coins");
-    const data = await res.json();
+// 🔹 Lista fija (Binance usa símbolos)
+const cryptos = [
+  { symbol: "BTCUSDT", name: "Bitcoin" },
+  { symbol: "ETHUSDT", name: "Ethereum" },
+  { symbol: "BNBUSDT", name: "BNB" },
+  { symbol: "SOLUSDT", name: "Solana" },
+  { symbol: "ADAUSDT", name: "Cardano" },
+  { symbol: "XRPUSDT", name: "XRP" },
+  { symbol: "DOGEUSDT", name: "Dogecoin" }
+];
 
-    // Filtrar solo activas y limitar a 50
-    const coins = data.filter(c => c.is_active).slice(0, 50);
+// 🔹 Cargar lista
+function cargarLista() {
+  // Opción inicial
+  const defaultOption = document.createElement("option");
+  defaultOption.textContent = "Elige una cripto";
+  defaultOption.value = "";
+  select.appendChild(defaultOption);
 
-    // Opción inicial
-    const defaultOption = document.createElement("option");
-    defaultOption.textContent = "Elige una cripto";
-    defaultOption.value = "";
-    select.appendChild(defaultOption);
-
-    // Llenar select
-    coins.forEach(coin => {
-      const option = document.createElement("option");
-      option.value = coin.id;
-      option.textContent = coin.name;
-      select.appendChild(option);
-    });
-
-  } catch (error) {
-    console.error("Error cargando lista:", error);
-    resultado.innerHTML = "Error cargando criptos";
-  }
+  cryptos.forEach(coin => {
+    const option = document.createElement("option");
+    option.value = coin.symbol;
+    option.textContent = coin.name;
+    select.appendChild(option);
+  });
 }
 
-// 🔹 Mostrar info de la cripto
-async function mostrarCrypto(id) {
-  if (!id) return;
+// 🔹 Mostrar info
+async function mostrarCrypto(symbol) {
+  if (!symbol) return;
 
   resultado.innerHTML = "Cargando...";
 
   try {
-    const res = await fetch(`https://api.coinpaprika.com/v1/tickers/${id}`);
+    const res = await fetch(
+      `https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`
+    );
+
     const data = await res.json();
 
-    const precio = data.quotes.USD.price;
-    const cambio = data.quotes.USD.percent_change_24h;
+    const precio = parseFloat(data.lastPrice);
+    const cambio = parseFloat(data.priceChangePercent);
     const color = cambio >= 0 ? "green" : "red";
 
     resultado.innerHTML = `
       <div class="crypto-card">
 
         <div class="crypto-header">
-          <h2>${data.name}</h2>
+          <h2>${symbol.replace("USDT", "")}</h2>
         </div>
 
         <div class="price">$${precio.toLocaleString()}</div>
@@ -58,7 +59,7 @@ async function mostrarCrypto(id) {
         </div>
 
         <div class="crypto-extra">
-          <p>Ranking: #${data.rank}</p>
+          <p>Par: ${symbol}</p>
           <p>Datos en tiempo real</p>
         </div>
 
@@ -66,15 +67,15 @@ async function mostrarCrypto(id) {
     `;
 
   } catch (error) {
-    console.error("Error cargando cripto:", error);
+    console.error("Error:", error);
     resultado.innerHTML = "Error al cargar datos";
   }
 }
 
-// 🔹 Evento al cambiar selección
+// 🔹 Evento
 select.addEventListener("change", (e) => {
   mostrarCrypto(e.target.value);
 });
 
-// 🔹 Inicializar
+// 🔹 Init
 cargarLista();
