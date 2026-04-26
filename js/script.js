@@ -1,7 +1,6 @@
 const select = document.getElementById("cryptoSelect");
 const resultado = document.getElementById("resultado");
 
-// 🔹 Lista fija (Binance usa símbolos)
 const cryptos = [
   { symbol: "BTCUSDT", name: "Bitcoin" },
   { symbol: "ETHUSDT", name: "Ethereum" },
@@ -12,9 +11,7 @@ const cryptos = [
   { symbol: "DOGEUSDT", name: "Dogecoin" }
 ];
 
-// 🔹 Cargar lista
 function cargarLista() {
-  // Opción inicial
   const defaultOption = document.createElement("option");
   defaultOption.textContent = "Elige una cripto";
   defaultOption.value = "";
@@ -28,7 +25,6 @@ function cargarLista() {
   });
 }
 
-// 🔹 Mostrar info
 async function mostrarCrypto(symbol) {
   if (!symbol) return;
 
@@ -72,10 +68,8 @@ async function mostrarCrypto(symbol) {
   }
 }
 
-// 🔹 Evento
 select.addEventListener("change", (e) => {
   mostrarCrypto(e.target.value);
 });
 
-// 🔹 Init
 cargarLista();
