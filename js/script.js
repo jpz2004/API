@@ -14,13 +14,20 @@ document.addEventListener("DOMContentLoaded", () => {
   ];
 
   function cargarLista() {
-    select.innerHTML = ""; 
+    const cryptos = [
+      { symbol: "BTCUSDT", name: "Bitcoin" },
+      { symbol: "ETHUSDT", name: "Ethereum" },
+      { symbol: "BNBUSDT", name: "BNB" },
+      { symbol: "SOLUSDT", name: "Solana" },
+      { symbol: "ADAUSDT", name: "Cardano" }
+    ];
+
+    // limpiar select por si acaso
+    select.innerHTML = "";
 
     const defaultOption = document.createElement("option");
     defaultOption.textContent = "Elige una cripto";
     defaultOption.value = "";
-    defaultOption.disabled = true;
-    defaultOption.selected = true;
     select.appendChild(defaultOption);
 
     cryptos.forEach(coin => {
