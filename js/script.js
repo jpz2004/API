@@ -1,12 +1,15 @@
 const select = document.getElementById("cryptoSelect");
 const resultado = document.getElementById("resultado");
 
+// 👉 PROXY
+const proxy = "https://api.allorigins.win/raw?url=";
+
+// 👉 URLS
+const apiLista = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=50";
+
 async function cargarLista() {
   try {
-    const res = await fetch(
-      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&per_page=50"
-    );
-
+    const res = await fetch(proxy + encodeURIComponent(apiLista));
     const data = await res.json();
 
     data.forEach(coin => {
@@ -17,7 +20,7 @@ async function cargarLista() {
     });
 
   } catch (error) {
-    console.error("Error cargando lista");
+    console.error("Error cargando lista", error);
   }
 }
 
@@ -27,10 +30,9 @@ async function mostrarCrypto(id) {
   resultado.innerHTML = "Cargando...";
 
   try {
-    const res = await fetch(
-      `https://api.coingecko.com/api/v3/coins/${id}`
-    );
+    const apiDetalle = `https://api.coingecko.com/api/v3/coins/${id}`;
 
+    const res = await fetch(proxy + encodeURIComponent(apiDetalle));
     const data = await res.json();
 
     const precio = data.market_data.current_price.usd;
@@ -61,6 +63,7 @@ async function mostrarCrypto(id) {
 
   } catch (error) {
     resultado.innerHTML = "Error al cargar";
+    console.error(error);
   }
 }
 
